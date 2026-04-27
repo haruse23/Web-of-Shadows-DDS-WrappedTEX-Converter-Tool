@@ -1,0 +1,29 @@
+To install this and register the menu in windows's registry,
+so it appears in the context menu (the menu that appears when you right-click a file)
+
+Run CMD as Adminstrator, go to the path where you extracted the folder
+e.g: "E:\\WoS DDS-Wrapped TEX Context Installer"
+
+Enter this command: python context_installer.py
+(and you have python installed of course, I used Python 3.14.4)
+
+if you want to register, just type "yes" without quotes
+
+if you have registered and want to unregister,
+run the command again, and when it asks, just type "no" without quotes
+
+if you register you should see "Convert to .wrap.tex (WoS)" when right-clicking a .dds file,
+and "Convert to .dds (WoS)" when right-clicking a Web of Shadows .wrap.tex file
+
+Converted files will appear next to the file you wanted to convert
+
+also if you check the windows registry editor you will find the keys and everything registered in the paths mentioned in Context Installer.py
+
+if you unregister, you no longer see any of both clickable items mentioned above in the context menu
+
+also if you check in the registry editor it should be deleted
+
+- the .dds/shell is kept as-is, but the DDStoWrappedTEX (WoS) is deleted
+
+- also the .tex/shell is kept (just in case some other tool uses this path/key for registering similar stuff 
+  as not to delete in the way), but the WrappedTEXtoDDS (WoS) is deleted
