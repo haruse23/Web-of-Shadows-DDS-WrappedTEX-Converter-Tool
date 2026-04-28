@@ -177,7 +177,7 @@ def main():
     script_full = get_script_full_path()
     print(f"Using script: {script_full}\n")
     
-    register = input("Do you want to install this ?")
+    register = input("Do you want to install this ?\n")
     
     if register == "yes":
         for ext, info in MENU_ITEMS.items():
