@@ -9,7 +9,9 @@ SCRIPT_NAME = "Convert.py"
 
 ALL_PATHS = ["Software\\Classes\\SystemFileAssociations\\.dds\\shell\\DDStoWrappedTEX (WoS)", "Software\\Classes\\SystemFileAssociations\\.tex\\shell\\WrappedTEXtoDDS (WoS)"]
 
-        
+
+IS_PATH_END = ["SOFTWARE", "CLASSES", "SYSTEMFILEASSOCIATIONS"] # Can't end in Software, Classes, SystemFileAssociations
+
             
 HIVES = [reg.HKEY_CURRENT_USER,
          reg.HKEY_LOCAL_MACHINE,
@@ -31,27 +33,19 @@ MENU_ITEMS = {
 EXTENSIONS = [".dds", ".tex"]
 # ===================================================
 
-def print_key_tree(root, path, indent=0):
+def print_key(root, path, indent=0):
     try:
         with reg.OpenKey(root, path, 0, reg.KEY_READ) as key:
 
             print("  " * indent + f"[KEY] {path}")
 
-            # Print subkeys recursively
-            i = 0
-            while True:
-                try:
-                    subkey = reg.EnumKey(key, i)
-                    print_key_tree(root, path + "\\" + subkey, indent + 1)
-                    i += 1
-                    print()
-                except OSError:
-                    break
-
     except FileNotFoundError:
         print("  " * indent + f"[MISSING] {path}")
+        return False
+        
     except PermissionError:
         print("  " * indent + f"[DENIED] {path}")
+        return False
         
         
 def get_python_path():
@@ -101,6 +95,9 @@ def add_context_menu(extension, menu_text, menu_key):
                 reg.SetValue(cmd_key, "", reg.REG_SZ, command_line)
 
             print(f"✓ Successfully added for {extension}")
+            
+        else:
+            print("Nothing has been executed. Nothing has been registered.")
         
     except Exception as e:
         print(f"✗ Failed for {extension}: {e}")
@@ -111,7 +108,7 @@ def delete_key(root, path):
     try:
         # Open the key
         with reg.OpenKey(root, path, 0, reg.KEY_ALL_ACCESS) as key:
-       
+            
             # Delete subkeys first
             while True:
                 try:
@@ -144,30 +141,35 @@ def remove_context_menu():
     try:
         for hive in HIVES:
             for path in ALL_PATHS:
-                print_key_tree(hive, path)
+                print_key_info = print_key(hive, path)
                 
-        uninstall = input("Are you sure you want to delete/unregister those paths (keys) ?\n")
-        
-        if uninstall == "yes":
-            for hive in HIVES:
-                for path in ALL_PATHS:
+                if print_key_info == False:
+                    continue
+                
+                uninstall = input("Are you sure you want to delete/unregister this path (key) ?\n")
+                
+                if uninstall == "yes":
+                    if path == "" or path.split("\\")[-1].upper() in IS_PATH_END: # Safe-guard. Check if path is empty or its uppercase format ends in any of the string elements inside IS_PATH_END List
+                        print("You can't unregister/delete this !!. Aborting...")
+                        return
+                        
+                        
                     delete_key(hive, path)
-                
-            
+                    
+                    print("✓ Successfully removed key from registry")
+                    
+                else:
+                    print("Key/path hasn't been removed from registry")
 
-            print("✓ Successfully removed context menu")
-            return True
-            
-        else:
-            print("Nothing has been executed. Nothing has been deleted/unregistered")
-            return False
+        return
+
 
     except PermissionError:
         print("✗ Permission denied (run as admin)")
-        return False
+        return
     except Exception as e:
         print("✗ Error:", e)
-        return False
+        return
 
 
 
