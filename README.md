@@ -10,16 +10,13 @@ The tool can be installed or un-installed.
 For more details, read the "How To Install.txt" file, it also includes how to un-install.
 
 # Changelog
-Version 1.0.2
+### Version 1.0.2
+- Made the tool so it is much safer, now it asks for more confirmation before registering or unregistering any path or key
 
-    Made the tool so it is much safer, now it asks for more confirmation before registering or unregistering any path or key
+### Version 1.0.1
+-Changed the tool to register only to the current user's hive (HKEY_CURRENT_USER), read the "How To Install.txt" file very well.
+-Changed the tool to un-register from all three hives [HKEY_CLASSES_ROOT, HKEY_CURRENT_USER, HKEY_LOCAL_MACHINE] just in case anything gets duplicated
 
-Version 1.0.1
-
-    Changed the tool to register only to the current user's hive (HKEY_CURRENT_USER), read the "How To Install.txt" file very well.
-    Changed the tool to un-register from all three hives [HKEY_CLASSES_ROOT, HKEY_CURRENT_USER, HKEY_LOCAL_MACHINE] just in case anything gets duplicated
-
-Version 1.0.0
-
-    Release
+### Version 1.0.0
+-Release
 
