@@ -9,12 +9,16 @@ Enter this command: python context_installer.py
 
 if you want to register, just type "yes" without quotes
 
+the tool asks you to confirm before registering any path or key
+
 it will register in the current user account only, if you use admin privileges (you ran CMD as adminstrator) 
 it will register in the adminstrator account
 if you are already running Windows as an Adminstrator account, it won't matter and still register to that adminstrator account
 
 if you have registered and want to unregister,
 run the command again, and when it asks, just type "no" without quotes
+
+the tool asks you to confirm before unregistering any path or key
 
 if you register you should see "Convert to .wrap.tex (WoS)" when right-clicking a .dds file,
 and "Convert to .dds (WoS)" when right-clicking a Web of Shadows .wrap.tex file

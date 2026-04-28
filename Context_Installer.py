@@ -31,6 +31,29 @@ MENU_ITEMS = {
 EXTENSIONS = [".dds", ".tex"]
 # ===================================================
 
+def print_key_tree(root, path, indent=0):
+    try:
+        with reg.OpenKey(root, path, 0, reg.KEY_READ) as key:
+
+            print("  " * indent + f"[KEY] {path}")
+
+            # Print subkeys recursively
+            i = 0
+            while True:
+                try:
+                    subkey = reg.EnumKey(key, i)
+                    print_key_tree(root, path + "\\" + subkey, indent + 1)
+                    i += 1
+                    print()
+                except OSError:
+                    break
+
+    except FileNotFoundError:
+        print("  " * indent + f"[MISSING] {path}")
+    except PermissionError:
+        print("  " * indent + f"[DENIED] {path}")
+        
+        
 def get_python_path():
     python_exe = Path(sys.executable)
     python = python_exe.parent / "pythonw.exe"
@@ -57,21 +80,27 @@ def add_context_menu(extension, menu_text, menu_key):
     try:
         key_path = rf"{base_key}\{menu_key}"
         
-        with reg.CreateKey(reg.HKEY_CURRENT_USER, key_path) as key:
-            reg.SetValue(key, "", reg.REG_SZ, menu_text)
-            reg.SetValueEx(key, "Position", 0, reg.REG_SZ, "Bottom")   # Try to put at bottom
-
-        # Build the command
-        python_path = get_python_path()
-        script_full_path = get_script_full_path()
         
-        command_line = f'"{python_path}" "{script_full_path}" "%1"'
+        print(f"Follwing paths will be registered for .dds and .wrap.tex in HKEY_CURRENT_USER: {key_path}")
+        print(f"Follwing paths will be registered for .dds and .wrap.tex in HKEY_CURRENT_USER: {key_path + "\\command"}")
+        install_context_menu = input("Do you want to install context menus ?\n")
+        
+        if install_context_menu == "yes":
+            with reg.CreateKey(reg.HKEY_CURRENT_USER, key_path) as key:
+                reg.SetValue(key, "", reg.REG_SZ, menu_text)
+                reg.SetValueEx(key, "Position", 0, reg.REG_SZ, "Bottom")   # Try to put at bottom
+        
+            # Build the command
+            python_path = get_python_path()
+            script_full_path = get_script_full_path()
+            
+            command_line = f'"{python_path}" "{script_full_path}" "%1"'
 
-        command_path = rf"{key_path}\command"
-        with reg.CreateKey(reg.HKEY_CURRENT_USER, command_path) as cmd_key:
-            reg.SetValue(cmd_key, "", reg.REG_SZ, command_line)
+            command_path = rf"{key_path}\command"
+            with reg.CreateKey(reg.HKEY_CURRENT_USER, command_path) as cmd_key:
+                reg.SetValue(cmd_key, "", reg.REG_SZ, command_line)
 
-        print(f"✓ Successfully added for {extension}")
+            print(f"✓ Successfully added for {extension}")
         
     except Exception as e:
         print(f"✗ Failed for {extension}: {e}")
@@ -112,13 +141,26 @@ def delete_key(root, path):
         
         
 def remove_context_menu():
-    try:             
+    try:
         for hive in HIVES:
             for path in ALL_PATHS:
-                delete_key(hive, path)
+                print_key_tree(hive, path)
+                
+        uninstall = input("Are you sure you want to delete/unregister those paths (keys) ?\n")
+        
+        if uninstall == "yes":
+            for hive in HIVES:
+                for path in ALL_PATHS:
+                    delete_key(hive, path)
+                
+            
 
-        print("✓ Successfully removed context menu")
-        return True
+            print("✓ Successfully removed context menu")
+            return True
+            
+        else:
+            print("Nothing has been executed. Nothing has been deleted/unregistered")
+            return False
 
     except PermissionError:
         print("✗ Permission denied (run as admin)")
