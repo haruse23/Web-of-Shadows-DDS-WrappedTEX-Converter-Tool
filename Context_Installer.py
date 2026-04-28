@@ -6,6 +6,16 @@ from pathlib import Path
 
 SCRIPT_NAME = "Convert.py"
 
+
+ALL_PATHS = ["Software\\Classes\\SystemFileAssociations\\.dds\\shell\\DDStoWrappedTEX (WoS)", "Software\\Classes\\SystemFileAssociations\\.tex\\shell\\WrappedTEXtoDDS (WoS)"]
+
+        
+            
+HIVES = [reg.HKEY_CURRENT_USER,
+         reg.HKEY_LOCAL_MACHINE,
+         reg.HKEY_CLASSES_ROOT]
+         
+         
 # Different text for each extension
 MENU_ITEMS = {
     ".dds": {
@@ -47,7 +57,7 @@ def add_context_menu(extension, menu_text, menu_key):
     try:
         key_path = rf"{base_key}\{menu_key}"
         
-        with reg.CreateKey(reg.HKEY_LOCAL_MACHINE, key_path) as key:
+        with reg.CreateKey(reg.HKEY_CURRENT_USER, key_path) as key:
             reg.SetValue(key, "", reg.REG_SZ, menu_text)
             reg.SetValueEx(key, "Position", 0, reg.REG_SZ, "Bottom")   # Try to put at bottom
 
@@ -58,7 +68,7 @@ def add_context_menu(extension, menu_text, menu_key):
         command_line = f'"{python_path}" "{script_full_path}" "%1"'
 
         command_path = rf"{key_path}\command"
-        with reg.CreateKey(reg.HKEY_LOCAL_MACHINE, command_path) as cmd_key:
+        with reg.CreateKey(reg.HKEY_CURRENT_USER, command_path) as cmd_key:
             reg.SetValue(cmd_key, "", reg.REG_SZ, command_line)
 
         print(f"✓ Successfully added for {extension}")
@@ -67,34 +77,54 @@ def add_context_menu(extension, menu_text, menu_key):
         print(f"✗ Failed for {extension}: {e}")
 
 
-def remove_context_menu(extension, menu_key):
-    """Unregister a context menu item for a file extension"""
-    base_key = rf"Software\Classes\SystemFileAssociations\{extension}\shell"
-        
-    key_path = rf"{base_key}\{menu_key}"
-    
+
+def delete_key(root, path):
     try:
-        # First, delete the command subkey
-        command_path = rf"{key_path}\command"
-        try:
-            reg.DeleteKey(reg.HKEY_LOCAL_MACHINE, command_path)
-            print(f"  ✓ Deleted command key")
-        except FileNotFoundError:
-            pass  # Key doesn't exist, that's fine
+        # Open the key
+        with reg.OpenKey(root, path, 0, reg.KEY_ALL_ACCESS) as key:
+       
+            # Delete subkeys first
+            while True:
+                try:
+                    subkey = reg.EnumKey(key, 0)
+                    delete_key(root, path + "\\" + subkey)
+                except OSError:
+                    break
+                    
+            # Delete values
+            while True:
+                try:
+                    value = reg.EnumValue(key, 0)[0]
+                    reg.DeleteValue(key, value)
+                except OSError:
+                    break
+                    
+        # Now delete the key itself
+        reg.DeleteKey(root, path)
+        print(f"✓ Deleted {path}")
         
-        # Then delete the menu key itself
-        reg.DeleteKey(reg.HKEY_LOCAL_MACHINE, key_path)
-        print(f"✓ Successfully unregistered '{menu_key}' for {extension}")
-        return True
-        
-    except PermissionError:
-        print(f"✗ Permission denied for {extension}. Run as Administrator!")
-        return False
     except FileNotFoundError:
-        print(f"✗ Context menu not found for {extension}\\{menu_key}")
+        print(f"Key not found: {path}")
+    except PermissionError:
+        print("✗ Permission denied (run as admin)")
+    except Exception as e:
+        print("✗ Error:", e)
+        
+        
+def remove_context_menu():
+    try:             
+        for hive in HIVES:
+            for path in ALL_PATHS:
+                delete_key(hive, path)
+
+        print("✓ Successfully removed context menu")
+        return True
+
+    except PermissionError:
+        print("✗ Permission denied (run as admin)")
         return False
     except Exception as e:
-        print(f"✗ Failed to unregister for {extension}: {e}")
+        print("✗ Error:", e)
         return False
 
 
@@ -112,8 +142,7 @@ def main():
             add_context_menu(ext, info["text"], info["key_name"])
     
     elif register == "no":
-        for ext, info in MENU_ITEMS.items():
-            remove_context_menu(ext, info["key_name"])
+            remove_context_menu()
 
     print("\nCode finished!")
     input("\nPress Enter to exit...")
