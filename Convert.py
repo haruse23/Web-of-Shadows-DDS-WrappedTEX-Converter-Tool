@@ -118,6 +118,6 @@ def Convert(Filepath, DDS, TEX):
 if __name__ == "__main__":
     if len(sys.argv) > 1:
         file_path = sys.argv[1]        # This gets the full path of the clicked file
-        print(f"File received from context menu: {file_path}")
+        print(f"File received from context menu: {file_path}\n")
         
         Convert(file_path, DDS, TEX)

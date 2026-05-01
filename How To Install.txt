@@ -1,51 +1,47 @@
-To install this and register the menu in windows's registry,
-so it appears in the context menu (the menu that appears when you right-click a file)
+-To install this and register the menu in windows's registry,
+	so it appears in the context menu (the menu that appears when you right-click a file)
 
-Run CMD, go to the path where you extracted the folder
-e.g: "E:\\WoS DDS-Wrapped TEX Context Installer"
+-Run CMD, go to the path where you extracted the folder
+	e.g: "E:\\WoS DDS-Wrapped TEX Context Installer"
 
-Enter this command: python context_installer.py
-(and you have python installed of course, I used Python 3.14.4)
+-Enter this command: python context_installer.py
+	(and you have python installed of course, I used Python 3.14.4)
+		or just simply double click the python file if it is associated with python as the default app
+			no admin privileges needed
 
-if you want to register, just type "yes" without quotes
+-the tool leaves console window open regardless of success or error, to be able to detect erros when they occur
 
-the tool asks you to confirm before registering any path or key
+-if you want to register, just type "yes" without quotes
+	the tool asks you to confirm before registering any path or key
 
-it will register in the current user account only, if you use admin privileges (you ran CMD as adminstrator) 
-it will register in the adminstrator account
-if you are already running Windows as an Adminstrator account, it won't matter and still register to that adminstrator account
+-it will register in the current user account only, if you use admin privileges (you ran CMD as adminstrator) 
+	it will register in the adminstrator account
+		if you are already running Windows as an Adminstrator account, it won't matter and still register to that adminstrator account
 
-if you have registered and want to unregister,
-run the command again, and when it asks, just type "no" without quotes
+-if you have registered and want to unregister,
+	run the command again, and when it asks, just type "no" without quotes
+		the tool asks you to confirm before unregistering any path or key
 
-the tool asks you to confirm before unregistering any path or key
+-if you register you should see "Convert to .wrap.tex (WoS)" when right-clicking a .dds file,
+	and "Convert to .dds (WoS)" when right-clicking a Web of Shadows .wrap.tex file
 
-if you register you should see "Convert to .wrap.tex (WoS)" when right-clicking a .dds file,
-and "Convert to .dds (WoS)" when right-clicking a Web of Shadows .wrap.tex file
+-Converted files will appear next to the file you wanted to convert
+	also if you check the windows registry editor you will find the keys and everything registered in the paths mentioned in Context Installer.py
 
-Converted files will appear next to the file you wanted to convert
+-if you unregister, you no longer see any of both clickable items mentioned above in the context menu
+	also if you check in the registry editor it should be deleted
 
-also if you check the windows registry editor you will find the keys and everything registered in the paths mentioned in Context Installer.py
+-The tool registers in certain paths in only one hive (HKEY_CURRENT_USER)
 
-if you unregister, you no longer see any of both clickable items mentioned above in the context menu
+-When un-registering, it removes only from the same hive (HKEY_CURRENT_USER)
 
-also if you check in the registry editor it should be deleted
-
-The tool registers in certain paths in only one hive (HKEY_CURRENT_USER)
-
-When un-registering, it removes all the paths used in registering, but from all the three writable hives
-[HKEY_CLASSES_ROOT, HKEY_CURRENT_USER, HKEY_LOCAL_MACHINE]
-
-If something goes wrong, you can always check the hives and paths mentioned in "Context_Installer.py"
-
-and use the default windows registry editor or Registry Workshop to inspect manually
+-If something goes wrong, you can always check the hives and paths mentioned in "Context_Installer.py"
+	and use the default windows registry editor or Registry Workshop to inspect manually
 
 Some paths to consider searching in, just in case:
-HKEY_CLASSES_ROOT\
-HKEY_CLASSES_ROOT\Software\Classes\SystemFileAssociations\.dds or .tex
-HKEY_CLASSES_ROOT\Software and HKEY_CLASSES_ROOT\Software\Classes
-HKEY_CLASSES_ROOT\Software\Classes\.dds or .tex
-
-Same paths above but for HKEY_CURRENT_USER and HKEY_LOCAL_MACHINE
+HKEY_CURRENT_USER\
+HKEY_CURRENT_USER\Software\Classes\SystemFileAssociations\.dds or .tex
+HKEY_CURRENT_USER\Software and HKEY_CURRENT_USER\Software\Classes
+HKEY_CURRENT_USER\Software\Classes\.dds or .tex
 
 Keywords: .dds, .tex, WoS, Wrapped, TEX, DDS
