@@ -15,7 +15,7 @@ For more details, read the "How To Install.txt" file, it also includes how to un
 
 - Changed the tool such that it un-registers the keys from only the current user's hive where they were added (HKEY_CURRENT_USER)
 
-- Changed the tool such that it sets the default value as "open", now when double-clicking the default Windows's Open/Open With... will execute instead of the tool itself
+- Changed the tool such that it sets the default value as "open", now when double-clicking the files, the default Windows's Open/Open With... will execute instead of the tool itself
 
 - Changed the tool such that it bypasses WIndows's 15 file limit through the value "MultiSelectModel"="Player", now more than 15 files can be selected and the tool will still show in the Context Menu
 
