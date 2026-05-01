@@ -223,7 +223,7 @@ def delete_key(root, path):
 def remove_context_menu():
     try:
         for path in ALL_PATHS:
-            print_key_info = print_key(hive, path)
+            print_key_info = print_key(reg.HKEY_CURRENT_USER, path)
             
             if print_key_info == False:
                 continue
