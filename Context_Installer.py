@@ -7,7 +7,7 @@ from pathlib import Path
 SCRIPT_NAME = "Convert.py"
 
 
-ALL_PATHS = ["Software\\Classes\\WoSTextureTool", "Software\\Classes\\SystemFileAssociations\\.tex", "Software\\Classes\\SystemFileAssociations\\.dds\\shell\\WoSTextureTool (Convert to .wrap.tex)"]
+ALL_PATHS = ["Software\\Classes\\SystemFileAssociations\\.tex\\shell\\WebOfShadows (Convert to .dds)", "Software\\Classes\\SystemFileAssociations\\.dds\\shell\\WebOfShadows (Convert to .wrap.tex)"]
 
 
 IS_PATH_END = ["SOFTWARE", "CLASSES", "SYSTEMFILEASSOCIATIONS"] # Can't end in Software, Classes, SystemFileAssociations
@@ -138,6 +138,7 @@ def add_context_menu(extension, menu_text):
             
                 with reg.CreateKey(reg.HKEY_CURRENT_USER, f"{base_key_dds}\\shell\\{menu_text}") as key:
                     reg.SetValueEx(key, "Position", 0, reg.REG_SZ, "Bottom")   # Place at the bottom
+                    reg.SetValueEx(key, "MultiSelectModel", 0, reg.REG_SZ, "Player") # Bypass windows 15 file limit
             
                 # Build the command
                 python_path = get_python_path()
