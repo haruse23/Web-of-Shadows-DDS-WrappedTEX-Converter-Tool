@@ -9,6 +9,8 @@ The tool can be installed or un-installed.
 
 For more details, read the "How To Install.txt" file, it also includes how to un-install.
 
+For the sake of safety, you can always back-up your current registry before adding anything through several methods. Simplest is exporting the root of the whole registry as a .reg file (Win2k/XP), I exported mine and it is around 300 MB in size. Worth noting that when importing this back through a registry editor, it only merges not replace, so if any keys were added after the back-up, they will remain there. But, of course if any keys were removed by accident they will be restored.
+
 # Changelog
 ### Version 1.0.3
 - Changed the tool such that it uses pythonw.exe instead, which shows no console windows. However, this way if any errors occur we won't be able to catch them, unless the Convert.py script is ran normally from the CMD
